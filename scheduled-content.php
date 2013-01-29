@@ -3,14 +3,14 @@
 Plugin Name: Scheduled Content
 Description: Allows you to make certain post or page content available only at scheduled periods via a simple shortcode.
 Plugin URI: http://premium.wpmudev.org/project/scheduled-content
-Version: 1.0
+Version: 1.1
 Author: Aaron Edwards (Incsub)
 Author URI: http://premium.wpmudev.org/
 WDP ID: 215
 */
 
 /* 
-Copyright 2007-2011 Incsub (http://incsub.com)
+Copyright 2007-2013 Incsub (http://incsub.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -132,9 +132,12 @@ class ScheduledContent {
 		if ( $open ) {
 		
 		  //refresh page at end of period
-			if ($end >= time())
-			  $content .= '<script language="javascript">setTimeout("location.reload(true)", '.(($end - time()) * 1000).');</script>';
-			  
+			if ($end >= time()) {
+				$refresh = ($end - time()) * 1000;
+				if ($refresh < 172800000) //prevent integer overflow http://stackoverflow.com/questions/3468607/why-does-settimeout-break-for-large-millisecond-delay-values
+					$content .= '<script language="javascript">setTimeout("location.reload(true)", '.$refresh.');</script>';
+			}
+			
    		return do_shortcode( $content );
 		} else {
 		  $return = '<p class="scheduled-closed">' . $msg . '</p>';
@@ -303,7 +306,9 @@ class ScheduledContent {
 									<td>
 										<select id="sc-year" name="sc-year">
 										  <?php
-											for ($i = 2011; $i <= 2021; $i++) {
+											$now = date('Y');
+											$till = $now + 10;
+											for ($i = $now; $i <= $till; $i++) {
 												echo '<option value="'.$i.'">'.$i.'</option>';
 											}
 											?>
