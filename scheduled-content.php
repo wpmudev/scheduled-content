@@ -3,7 +3,7 @@
 Plugin Name: Scheduled Content
 Description: Allows you to make certain post or page content available only at scheduled periods via a simple shortcode.
 Plugin URI: http://premium.wpmudev.org/project/scheduled-content
-Version: 1.1
+Version: 1.1.1
 Author: Aaron Edwards (Incsub)
 Author URI: http://premium.wpmudev.org/
 WDP ID: 215
