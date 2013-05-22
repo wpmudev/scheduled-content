@@ -3,7 +3,7 @@
 Plugin Name: Scheduled Content
 Description: Allows you to make certain post or page content available only at scheduled periods via a simple shortcode.
 Plugin URI: http://premium.wpmudev.org/project/scheduled-content
-Version: 1.1.1
+Version: 1.1.2
 Author: Aaron Edwards (Incsub)
 Author URI: http://premium.wpmudev.org/
 WDP ID: 215
@@ -41,7 +41,8 @@ class ScheduledContent {
     // TinyMCE options
 		add_action( 'wp_ajax_scheduledTinymceOptions', array(&$this, 'tinymce_options') );
     add_action( 'admin_init', array(&$this, 'load_tinymce') );
-
+		
+		include_once( dirname( __FILE__ ) . '/includes/wpmudev-dash-notification.php' );
   }
 
   function localization() {
@@ -65,7 +66,7 @@ class ScheduledContent {
       return;
 
 		//if required fields not set don't protect
-		if ( (!$monthly && !$weekly && !$onetime) || !$time || !$length )
+		if ( (!$monthly && false === $weekly && !$onetime) || !$time || !$length )
     	return do_shortcode( $content );
 		
 		//calculate how long to keep open
@@ -88,7 +89,7 @@ class ScheduledContent {
 					$open = false;
 				}
 			}
-		} else if ($weekly) {
+		} else if (false !== $weekly) {
 			$weekdays = explode(',', $weekly);
 			sort($weekdays);
 
@@ -446,17 +447,3 @@ class ScheduledContent {
 
 //load class
 $sc = &new ScheduledContent();
-
-
-///////////////////////////////////////////////////////////////////////////
-/* -------------------- Update Notifications Notice -------------------- */
-if ( !function_exists( 'wdp_un_check' ) ) {
-  add_action( 'admin_notices', 'wdp_un_check', 5 );
-  add_action( 'network_admin_notices', 'wdp_un_check', 5 );
-  function wdp_un_check() {
-    if ( !class_exists( 'WPMUDEV_Update_Notifications' ) && current_user_can( 'install_plugins' ) )
-      echo '<div class="error fade"><p>' . __('Please install the latest version of <a href="http://premium.wpmudev.org/project/update-notifications/" title="Download Now &raquo;">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href="http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/">More information &raquo;</a>', 'wpmudev') . '</a></p></div>';
-  }
-}
-/* --------------------------------------------------------------------- */
-?>
