@@ -1,0 +1,180 @@
+# Copyright (C) 2014 Scheduled Content
+# This file is distributed under the same license as the Scheduled Content package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Scheduled Content 1.2\n"
+"Report-Msgid-Bugs-To: http://premium.wpmudev.org/\n"
+"POT-Creation-Date: 2014-06-07 01:49:05+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: scheduled-content.php:142
+msgid "This content is not currently available."
+msgstr ""
+
+#: scheduled-content.php:142
+msgid "This content is not currently available. It will be available in:"
+msgstr ""
+
+#: scheduled-content.php:165
+msgid "%%D%% Days, %%H%% Hours, %%M%% Minutes, %%S%% Seconds"
+msgstr ""
+
+#: scheduled-content.php:238
+msgid "You must select at least one weekday."
+msgstr ""
+
+#: scheduled-content.php:277
+msgid "Scheduled Content"
+msgstr ""
+
+#: scheduled-content.php:286
+msgid "Schedule"
+msgstr ""
+
+#: scheduled-content.php:289
+msgid "Monthly"
+msgstr ""
+
+#: scheduled-content.php:290
+msgid "Weekly"
+msgstr ""
+
+#: scheduled-content.php:291
+msgid "Onetime"
+msgstr ""
+
+#: scheduled-content.php:296
+msgid "Date"
+msgstr ""
+
+#: scheduled-content.php:306
+msgid "Choose the day of each month to display the content."
+msgstr ""
+
+#: scheduled-content.php:309
+msgid "Weekdays"
+msgstr ""
+
+#: scheduled-content.php:311
+msgid "Sun."
+msgstr ""
+
+#: scheduled-content.php:312
+msgid "Mon."
+msgstr ""
+
+#: scheduled-content.php:313
+msgid "Tues."
+msgstr ""
+
+#: scheduled-content.php:314
+msgid "Wed."
+msgstr ""
+
+#: scheduled-content.php:315
+msgid "Thurs."
+msgstr ""
+
+#: scheduled-content.php:316
+msgid "Fri."
+msgstr ""
+
+#: scheduled-content.php:317
+msgid "Sat."
+msgstr ""
+
+#: scheduled-content.php:319
+msgid "Choose what days of each week to display the content."
+msgstr ""
+
+#: scheduled-content.php:322
+msgid "Onetime Date"
+msgstr ""
+
+#: scheduled-content.php:350
+msgid "Choose the onetime date to display the content."
+msgstr ""
+
+#: scheduled-content.php:358
+msgid "Open Time"
+msgstr ""
+
+#: scheduled-content.php:377
+msgid "AM"
+msgstr ""
+
+#: scheduled-content.php:378
+msgid "PM"
+msgstr ""
+
+#: scheduled-content.php:380
+msgid "Use WordPress Time Instead of GMT"
+msgstr ""
+
+#: scheduled-content.php:382
+msgid "Choose the time you want to begin displaying the content."
+msgstr ""
+
+#: scheduled-content.php:385
+msgid "Open Length"
+msgstr ""
+
+#: scheduled-content.php:393
+msgid "Year(s)"
+msgstr ""
+
+#: scheduled-content.php:400
+msgid "Day(s)"
+msgstr ""
+
+#: scheduled-content.php:408
+msgid "Hour(s)"
+msgstr ""
+
+#: scheduled-content.php:415
+msgid "Min"
+msgstr ""
+
+#: scheduled-content.php:417
+msgid "Choose how long to display the content."
+msgstr ""
+
+#: scheduled-content.php:420
+msgid "Message"
+msgstr ""
+
+#: scheduled-content.php:424
+msgid "Optional - This message displays when the content is not available."
+msgstr ""
+
+#: scheduled-content.php:432
+msgid "Cancel"
+msgstr ""
+
+#: scheduled-content.php:436
+msgid "Insert"
+msgstr ""
+#. Plugin Name of the plugin/theme
+msgid "Scheduled Content"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://premium.wpmudev.org/project/scheduled-content"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Allows you to make certain post or page content available only at scheduled periods via a simple shortcode."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "WPMU DEV"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://premium.wpmudev.org/"
+msgstr ""

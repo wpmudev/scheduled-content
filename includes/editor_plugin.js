@@ -16,8 +16,8 @@
 			ed.addCommand('mceScheduled', function() {
 				ed.windowManager.open({
 					file : url + "../../../../../wp-admin/admin-ajax.php?action=scheduledTinymceOptions",
-    	 		width : 480,
-					height : 300,
+    	 		width : 500,
+					height : 310,
 					inline : 1
 				}, {
 					plugin_url : url // Plugin absolute URL

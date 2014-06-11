@@ -3,14 +3,17 @@
 Plugin Name: Scheduled Content
 Description: Allows you to make certain post or page content available only at scheduled periods via a simple shortcode.
 Plugin URI: http://premium.wpmudev.org/project/scheduled-content
-Version: 1.1.2
-Author: Aaron Edwards (Incsub)
+Version: 1.2
+Author: WPMU DEV
 Author URI: http://premium.wpmudev.org/
 WDP ID: 215
 */
 
-/* 
-Copyright 2007-2013 Incsub (http://incsub.com)
+/*
+Copyright 2007-2014 Incsub (http://incsub.com)
+
+Author: Aaron Edwards
+Contributors: Dharmendra Vekariya
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -29,19 +32,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class ScheduledContent {
 
-  function ScheduledContent() {
+  function __construct() {
 
     //shortcodes
     add_shortcode( 'scheduled', array(&$this, 'shortcode') );
-    
+
     //localize the plugin
 	  add_action( 'plugins_loaded', array(&$this, 'localization') );
 
-    
+
     // TinyMCE options
 		add_action( 'wp_ajax_scheduledTinymceOptions', array(&$this, 'tinymce_options') );
     add_action( 'admin_init', array(&$this, 'load_tinymce') );
-		
+
 		include_once( dirname( __FILE__ ) . '/includes/wpmudev-dash-notification.php' );
   }
 
@@ -58,7 +61,8 @@ class ScheduledContent {
       'onetime' => false, //date string, ie "08/15/2010"
       'time' => false, //time string, ie "8:00 PM"
       'length' => false, //how long to keep open in years:days:hours:minutes, ie "0:0:12:35"
-      'msg' => false
+      'msg' => false,
+      'wptime' => false
   	), $atts ) );
 
 		//skip check for no content
@@ -68,22 +72,28 @@ class ScheduledContent {
 		//if required fields not set don't protect
 		if ( (!$monthly && false === $weekly && !$onetime) || !$time || !$length )
     	return do_shortcode( $content );
-		
+
+		if ($wptime == true) {
+			$now = current_time('timestamp');
+		} else {
+			$now = time();
+		}
 		//calculate how long to keep open
     @list($yrs, $dys, $hrs, $mns) = explode(':', $length);
-    $length = strtotime("+$yrs Years $dys Days $hrs Hours $mns Minutes") - time();
+    
+    $length = strtotime("+$yrs Years $dys Days $hrs Hours $mns Minutes", $now) - $now;
 
 		//do our checks for if its open
-    $open = false;
+		$open = false;
 		if ($monthly) {
-			$start = strtotime(date('F').' '.$monthly.' '.$time);
-			$end = $start + $length;
-			if ($start <= time() && $end >= time()) {
+		$start = strtotime(date('F').' '.$monthly.' '.$time, $now);
+		$end = $start + $length;
+			if ($start <= $now && $end >= $now) {
 				$open = true;
-			} else if ($end < time()) {
-			  $start = strtotime(date('F', strtotime('+1 month')).' '.$monthly.' '.$time);
+			} else if ($end < $now) {
+			  $start = strtotime(date('F', strtotime('+1 month', $now)).' '.$monthly.' '.$time , $now);
 				$end = $start + $length;
-		    if ($start <= time() && $end >= time()) {
+		    if ($start <= $now && $end >= $now) {
 					$open = true;
 				} else {
 					$open = false;
@@ -95,81 +105,81 @@ class ScheduledContent {
 
 			$days = array(0=>'sun', 1=>'mon', 2=>'tue', 3=>'wed', 4=>'thu', 5=>'fri', 6=>'sat');
 			foreach ($weekdays as $day) {
-				$periods[strtotime("last $days[$day] $time")] = strtotime("last $days[$day] $time") + $length;
-				$periods[strtotime("this $days[$day] $time")] = strtotime("this $days[$day] $time") + $length;
-    		$periods[strtotime("next $days[$day] $time")] = strtotime("next $days[$day] $time") + $length;
+				$periods[strtotime("last $days[$day] $time", $now)] = strtotime("last $days[$day] $time", $now) + $length;
+				$periods[strtotime("this $days[$day] $time", $now)] = strtotime("this $days[$day] $time", $now) + $length;
+				$periods[strtotime("next $days[$day] $time", $now)] = strtotime("next $days[$day] $time", $now) + $length;
 			}
 
 			ksort($periods);
 			//see if we are in one of the periods
 			foreach ($periods as $start => $end) {
-    		if ($start <= time() && $end >= time()) {
+				if ($start <= $now && $end >= $now) {
 					$open = true;
 					break;
 				}
 			}
-			
+
 			//not in a period, figure out the next one
 			if (!$open) {
-        foreach ($periods as $start => $end) {
-	    		if ($start > time())
-						break;
+				foreach ($periods as $start => $end) {
+					if ($start > $now)
+					break;
 				}
 			}
 
 		} else if ($onetime) {
-      $start = strtotime("$onetime $time");
+      $start = strtotime("$onetime $time", $now);
 			$end = $start + $length;
-			if ($start <= time() && $end >= time()) {
+			if ($start <= $now && $end >= $now) {
 				$open = true;
 			}
 		}
 
 		//set default closed messages
 		if (!$msg)
-			$msg = ($onetime && $end <= time()) ? __("This content is not currently available.", 'sc') : __("This content is not currently available. It will be available in:", 'sc');
-			
+			$msg = ($onetime && $end <= $now) ? __("This content is not currently available.", 'sc') : __("This content is not currently available. It will be available in:", 'sc');	  	 		 				 			 	 
+
 		//check cookie for password
 		if ( $open ) {
-		
+
 		  //refresh page at end of period
-			if ($end >= time()) {
-				$refresh = ($end - time()) * 1000;
+			if ($end >= $now) {
+				$refresh = ($end - $now) * 1000;
 				if ($refresh < 172800000) //prevent integer overflow http://stackoverflow.com/questions/3468607/why-does-settimeout-break-for-large-millisecond-delay-values
 					$content .= '<script language="javascript">setTimeout("location.reload(true)", '.$refresh.');</script>';
 			}
-			
-   		return do_shortcode( $content );
+
+			return do_shortcode( $content );
 		} else {
-		  $return = '<p class="scheduled-closed">' . $msg . '</p>';
-		
+			$return = '<p class="scheduled-closed">' . $msg . '</p>';
+			$wpgmt  = ($wptime==true)? "" : " GMT";
 		  $var = 'cd_' . rand();
 			$countdown = '<script language="javascript" src="'.plugins_url('scheduled-content/includes/countdown.js').'"></script>
 <div class="scheduled-timer" id="clock_'.$var.'"></div>
 <script language="javascript">
 	var '.$var.' = new countdown("'.$var.'");
 	'.$var.'.Div			= "clock_'.$var.'";
-	'.$var.'.TargetDate		= "'.date("m/d/Y g:i A", $start).' GMT";
+	'.$var.'.TargetDate		= "'.date("m/d/Y g:i A", $start). $wpgmt . '";
 	'.$var.'.DisplayFormat	= "'.__("%%D%% Days, %%H%% Hours, %%M%% Minutes, %%S%% Seconds", 'sc').'";
 	'.$var.'.Setup();
 </script>
 			';
-			
+
 			//show countdown if start is in the future
-			if ($start > time())
+			if ($start > $now)
 			  $return .= $countdown;
-			  
+
 			return $return;
 		}
   }
-	
+
 	function load_tinymce() {
     if ( (current_user_can('edit_posts') || current_user_can('edit_pages')) && get_user_option('rich_editing') == 'true') {
    		add_filter( 'mce_external_plugins', array(&$this, 'tinymce_add_plugin') );
 			add_filter( 'mce_buttons', array(&$this,'tinymce_register_button') );
 		}
 	}
-	
+
 		/**
 	 * TinyMCE dialog content
 	 */
@@ -188,7 +198,7 @@ class ScheduledContent {
 				<script type="text/javascript">
 
           tinyMCEPopup.storeSelection();
-          
+
           jQuery(document).ready(function($) {
             $('#sc-type').change(function() {
 							if ($(this).val() == 'monthly') {
@@ -207,13 +217,13 @@ class ScheduledContent {
 						});
 					});
 
-          
+
 					var insertSchedule = function (ed) {
 
 						tinyMCEPopup.restoreSelection();
-						
+
 						output = '[scheduled';
-						
+
 						//insert schedule type
 						if (jQuery('#sc-type').val() == 'monthly') {
 							output += ' monthly="'+ jQuery('#sc-monthdate').val() +'"';
@@ -230,16 +240,20 @@ class ScheduledContent {
 						} else if (jQuery('#sc-type').val() == 'onetime') {
               output += ' onetime="'+ jQuery('#sc-year').val() +'/'+ jQuery('#sc-month').val() +'/'+ jQuery('#sc-day').val() +'"';
 						}
-						
+
 						//insert start time
 						output += ' time="'+ jQuery('#sc-hours').val() +':'+ jQuery('#sc-minutes').val() +' '+ jQuery('#sc-ampm').val() + '"';
-						
+
 						//insert open length
 						output += ' length="'+ jQuery('#sc-lyears').val() +':'+ jQuery('#sc-ldays').val() +':'+ jQuery('#sc-lhours').val() + ':' + jQuery('#sc-lmins').val() +'"';
 
 						//insert msg
 						if (jQuery('#sc-msg').val())
 							output += ' msg="'+ jQuery('#sc-msg').val() +'"';
+
+						if (jQuery('#wptime').is(':checked'))
+							output += ' wptime="true"';
+
 						
 						output += ']'+tinyMCEPopup.editor.selection.getContent()+'[/scheduled]';
 
@@ -360,8 +374,8 @@ class ScheduledContent {
 										<select id="sc-ampm" name="sc-ampm">
 										  <option value="AM"><?php _e("AM", 'sc'); ?></option>
 										  <option value="PM"><?php _e("PM", 'sc'); ?></option>
-										</select>
-										<span id="sc-utcoffset">GMT</span>
+										</select><br />
+										<label id="sc-utcoffset"><input type="checkbox" name="wptime" id="wptime"><?php _e("Use WordPress Time Instead of GMT", 'sc'); ?></label>
 									</td>
 									<td class="info"><?php _e("Choose the time you want to begin displaying the content.", 'sc'); ?></td>
 								</tr>
@@ -426,7 +440,7 @@ class ScheduledContent {
 		<?php
 		exit(0);
 	}
-	
+
 	/**
 	 * @see		http://codex.wordpress.org/TinyMCE_Custom_Buttons
 	 */
@@ -442,7 +456,7 @@ class ScheduledContent {
 		$plugin_array['scheduled'] = plugins_url('scheduled-content/includes/editor_plugin.js');
 		return $plugin_array;
 	}
-	
+
 } //end class
 
 //load class
