@@ -2,15 +2,16 @@
 /*
 Plugin Name: Scheduled Content
 Description: Allows you to make certain post or page content available only at scheduled periods via a simple shortcode.
-Plugin URI: http://premium.wpmudev.org/project/scheduled-content
-Version: 1.2
+Plugin URI: https://premium.wpmudev.org/project/scheduled-content/
+Version: 1.2.1
 Author: WPMU DEV
-Author URI: http://premium.wpmudev.org/
+Author URI: https://premium.wpmudev.org/
 WDP ID: 215
+Textdomain: sc
 */
 
 /*
-Copyright 2007-2014 Incsub (http://incsub.com)
+Copyright 2007-2016 Incsub (http://incsub.com)
 
 Author: Aaron Edwards
 Contributors: Dharmendra Vekariya
@@ -38,13 +39,20 @@ class ScheduledContent {
 		add_shortcode( 'scheduled', array( &$this, 'shortcode' ) );
 
 		//localize the plugin
-		add_action( 'plugins_loaded', array( &$this, 'localization' ) );
-
+		add_action( 'init', array( &$this, 'localization' ) );
 
 		// TinyMCE options
 		add_action( 'wp_ajax_scheduledTinymceOptions', array( &$this, 'tinymce_options' ) );
 		add_action( 'admin_init', array( &$this, 'load_tinymce' ) );
 
+		global $wpmudev_notices;
+		$wpmudev_notices[] = array(
+			'id'      => 215,
+			'name'    => 'Scheduled Content',
+			'screens' => array(
+				'post'
+			)
+		);
 		include_once( dirname( __FILE__ ) . '/includes/dash-notice/wpmudev-dash-notification.php' );
 	}
 
@@ -444,12 +452,12 @@ class ScheduledContent {
 
 			<div class="mceActionPanel">
 				<div style="float: left">
-					<input type="button" id="cancel" name="cancel" value="<?php _e( "Cancel", 'sc' ); ?>"
+					<input type="button" id="cancel" name="cancel" value="<?php esc_attr_e( "Cancel", 'sc' ); ?>"
 					       onclick="tinyMCEPopup.close();"/>
 				</div>
 
 				<div style="float: right">
-					<input type="submit" id="insert" name="insert" value="<?php _e( "Insert", 'sc' ); ?>"/>
+					<input type="submit" id="insert" name="insert" value="<?php esc_attr_e( "Insert", 'sc' ); ?>"/>
 				</div>
 			</div>
 		</form>
@@ -480,4 +488,4 @@ class ScheduledContent {
 } //end class
 
 //load class
-$sc = & new ScheduledContent();
+$_GLOBALS['ScheduledContent'] = new ScheduledContent();
