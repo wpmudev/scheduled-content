@@ -15,7 +15,7 @@
 			// Register the command so that it can be invoked by using tinyMCE.activeEditor.execCommand('mceChat');
 			ed.addCommand('mceScheduled', function() {
 				ed.windowManager.open({
-					file : url + "../../../../../wp-admin/admin-ajax.php?action=scheduledTinymceOptions",
+					file : ajaxurl + "?action=scheduledTinymceOptions",
     	 		width : 500,
 					height : 310,
 					inline : 1
