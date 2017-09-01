@@ -59,7 +59,7 @@ class ScheduledContent {
 	function localization() {
 		// Load up the localization file if we're using WordPress in a different language
 		// Place it in this plugin's "languages" folder and name it "sc-[value in wp-config].mo"
-		load_plugin_textdomain( 'sc', false, '/scheduled-content/languages/' );
+		load_plugin_textdomain( 'sc', false, dirname(plugin_basename(__FILE__)) . '/languages/' );
 	}
 
 	function shortcode( $atts, $content = null ) {
@@ -168,7 +168,7 @@ class ScheduledContent {
 			$return    = '<p class="scheduled-closed">' . $msg . '</p>';
 			$wpgmt     = ( $wptime == true ) ? "" : " GMT";
 			$var       = 'cd_' . rand();
-			$countdown = '<script language="javascript" src="' . plugins_url( 'scheduled-content/includes/countdown.js' ) . '"></script>
+			$countdown = '<script language="javascript" src="' . plugins_url(dirname(plugin_basename(__FILE__)) . '/includes/countdown.js') . '"></script>
 <div class="scheduled-timer" id="clock_' . $var . '"></div>
 <script language="javascript">
 	var ' . $var . ' = new countdown("' . $var . '");
@@ -480,7 +480,7 @@ class ScheduledContent {
 	 * @see    http://codex.wordpress.org/TinyMCE_Custom_Buttons
 	 */
 	function tinymce_add_plugin( $plugin_array ) {
-		$plugin_array['scheduled'] = plugins_url( 'scheduled-content/includes/editor_plugin.js' );
+		$plugin_array['scheduled'] = plugins_url(dirname(plugin_basename(__FILE__)) . '/includes/editor_plugin.js');
 
 		return $plugin_array;
 	}
